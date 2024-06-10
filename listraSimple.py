@@ -1,3 +1,4 @@
+import subprocess
 from Nodo import Nodo
 import os
 class ListaSimple:
@@ -73,33 +74,51 @@ class ListaSimple:
             actual = actual.siguiente
     
     def graficar(self):
-        if self.cabeza is None:
-            print("La lista está vacía. No se puede generar el gráfico.")
-            return
-        
-        codigodot = '''digraph G {
+        try:
+            if self.cabeza is None:
+                print("La lista está vacía. No se puede generar el gráfico.")
+                return
+            
+            codigodot = '''digraph G {
 rankdir=LR;
 node [shape = record, height = .1]
 '''
 
-        actual = self.cabeza
-        contador_nodos = 0
-        
-        while actual is not None:
-            codigodot += 'node'+str(contador_nodos)+' [label = "{'+ str(actual.dato).replace("\n", "\\n") +'}"];\n'
-            contador_nodos += 1
-            actual = actual.siguiente
+            actual = self.cabeza
+            contador_nodos = 0
+            
+            while actual is not None:
+                codigodot += 'node'+str(contador_nodos)+' [label = "{'+ str(actual.dato).replace("\n", "\\n") +'}"];\n'
+                contador_nodos += 1
+                actual = actual.siguiente
 
-        actual = self.cabeza
-        contador_nodos = 0
-        while actual is not None and actual.siguiente is not None:
-            codigodot += 'node'+str(contador_nodos)+' -> node'+str(contador_nodos+1)+';\n'
-            contador_nodos += 1
-            actual = actual.siguiente
+            actual = self.cabeza
+            contador_nodos = 0
+            while actual is not None and actual.siguiente is not None:
+                codigodot += 'node'+str(contador_nodos)+' -> node'+str(contador_nodos+1)+';\n'
+                contador_nodos += 1
+                actual = actual.siguiente
 
-        codigodot += '}'
+            codigodot += '}'
+            
+            with open('reportedot/lista.dot', 'w') as archivo:
+                archivo.write(codigodot)
 
-        with open('reportedot/lista.dot', 'w') as archivo:
-            pass
+            # Generar la imagen
+            ruta_dot = 'reportedot/lista.dot'
+            ruta_reporte = 'reportes/lista_simple.png'
+            comando = f'dot -Tpng {ruta_dot} -o {ruta_reporte}'
+            resultado = os.system(comando)
+            if resultado != 0:
+                print("Error al generar la imagen con Graphviz. Asegúrate de que Graphviz esté instalado y accesible desde la línea de comandos.")
+                return
 
-      
+            # Abrir la imagen
+            ruta_abrir_reporte = os.path.abspath(ruta_reporte)
+            if os.name == 'posix':
+                subprocess.run(['xdg-open', ruta_abrir_reporte])
+            else:
+                os.startfile(ruta_abrir_reporte)
+            print('Reporte generado con éxito')
+        except Exception as e:
+            print(f"Se produjo una excepción: {e}")

@@ -1,0 +1,5 @@
+digraph G {
+rankdir=LR;
+node [shape = record, height = .1]
+node0 [label = "{ID: 1\nTarea: qwedsqw\nDescripcion: qweqwe\nEstado: pendiente}"];
+}

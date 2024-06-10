@@ -23,3 +23,5 @@ class Tarea:
 
     def setEstado(self, estado):
         self.estado = estado
+
+   
